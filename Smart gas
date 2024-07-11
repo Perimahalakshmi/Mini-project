@@ -1,0 +1,67 @@
+#include <Servo.h>
+
+#define GAS_SENSOR_PIN A1
+#define FAN_PIN 7
+#define flame 9
+#define BUZZER_PIN 4
+ 
+
+int servoPin = 2; 
+Servo Servo1; 
+
+// Gas threshold level
+const int gas = 300; // Adjust this value according to your requirements
+const int gas2 = 320;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(GAS_SENSOR_PIN, INPUT);
+  pinMode(flame,INPUT);
+  pinMode(FAN_PIN, OUTPUT);
+  Servo1.attach(servoPin);
+  pinMode(BUZZER_PIN, OUTPUT);
+}
+
+void loop() {
+  int gasValue = analogRead(GAS_SENSOR_PIN);
+  //Serial.print("Gas Level: ");
+  Serial.print(gasValue);
+  Serial.print(",");
+  
+
+  if(gasValue<gas){
+    Serial.print("normal");
+    Serial.println("");
+    digitalWrite(FAN_PIN, LOW);
+    digitalWrite(BUZZER_PIN, LOW);
+    //Serial.println("Gas Level Normal");
+    //Serial.println("no Fire Detected ");
+  }
+  else if(gasValue<gas2){
+    Serial.print("lessgo");
+    Serial.println("");
+    digitalWrite(FAN_PIN, HIGH);
+    digitalWrite(BUZZER_PIN, HIGH);
+    //Serial.println("fan,buzzer");
+  }
+  else{
+    Serial.print("Danger");
+    Serial.println("");
+    digitalWrite(FAN_PIN, HIGH);
+    digitalWrite(BUZZER_PIN, HIGH);
+    //Serial.println("fan,buzz,motor");
+
+    Servo1.write(0); 
+    delay(1000);
+   // Make servo go to 90 degrees 
+    Servo1.write(90);
+    delay(1000); 
+    if(flame==HIGH){
+      //Serial.println("fire Detected");
+    }
+     else{
+      //Serial.println("no fire Detected");
+     } 
+  }
+  delay(2000); // Adjust the delay time according to your requirement
+}
